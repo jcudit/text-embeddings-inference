@@ -2,8 +2,8 @@
   {
     "name": "turing",
     "imageNamePrefix": "turing-",
-    "runOn": "main",
-    "sccache": true,
+    "runOn": "disabled",
+    "sccache": false,
     "cudaComputeCap": 75,
     "extraBuildArgs": "DEFAULT_USE_FLASH_ATTENTION=False",
     "dockerfile": "Dockerfile-cuda"
@@ -11,47 +11,47 @@
   {
     "name": "ampere",
     "imageNamePrefix": "",
-    "runOn": "always",
-    "sccache": true,
+    "runOn": "main",
+    "sccache": false,
     "cudaComputeCap": 80,
     "dockerfile": "Dockerfile-cuda"
   },
   {
     "name": "a10",
     "imageNamePrefix": "86-",
-    "runOn": "main",
-    "sccache": true,
+    "runOn": "disable",
+    "sccache": false,
     "cudaComputeCap": 86,
     "dockerfile": "Dockerfile-cuda"
   },
   {
     "name": "RTX 4000",
     "imageNamePrefix": "89-",
-    "runOn": "main",
-    "sccache": true,
+    "runOn": "disable",
+    "sccache": false,
     "cudaComputeCap": 89,
     "dockerfile": "Dockerfile-cuda"
   },
   {
     "name": "Hopper",
     "imageNamePrefix": "hopper-",
-    "runOn": "main",
-    "sccache": true,
+    "runOn": "disable",
+    "sccache": false,
     "cudaComputeCap": 90,
     "dockerfile": "Dockerfile-cuda"
   },
   {
     "name": "All",
     "imageNamePrefix": "cuda-",
-    "runOn": "main",
+    "runOn": "disable",
     "sccache": false,
     "dockerfile": "Dockerfile-cuda-all"
   },
   {
     "name": "cpu",
     "imageNamePrefix": "cpu-",
-    "runOn": "main",
-    "sccache": true,
+    "runOn": "disabled",
+    "sccache": false,
     "dockerfile": "Dockerfile"
   }
 ]

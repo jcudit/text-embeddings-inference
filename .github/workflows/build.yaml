@@ -44,8 +44,7 @@ jobs:
     concurrency:
       group: ${{ github.workflow }}-${{ github.job }}-${{matrix.name}}-${{ github.head_ref || github.run_id }}
       cancel-in-progress: true
-    runs-on:
-      group: aws-highmemory-32-plus-priv
+    runs-on: ubuntu-latest
     permissions:
       contents: write
       packages: write
@@ -61,25 +60,9 @@ jobs:
         uses: docker/setup-buildx-action@v3
         with:
           install: true
-          buildkitd-config: /tmp/buildkitd.toml
-
-      - name: Configure sccache
-        uses: actions/github-script@v6
-        with:
-          script: |
-            core.exportVariable('ACTIONS_CACHE_URL', process.env.ACTIONS_CACHE_URL || '');
-            core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env.ACTIONS_RUNTIME_TOKEN || '');
 
       - name: Inject slug/short variables
         uses: rlespinasse/github-slug-action@v4
-
-      - name: Login to internal Container Registry
-        if: github.event_name != 'pull_request'
-        uses: docker/login-action@v3
-        with:
-          username: ${{ secrets.REGISTRY_USERNAME }}
-          password: ${{ secrets.REGISTRY_PASSWORD }}
-          registry: registry.internal.huggingface.tech
 
       - name: Login to GitHub Container Registry
         if: github.event_name != 'pull_request'
@@ -94,8 +77,7 @@ jobs:
         uses: docker/metadata-action@v5
         with:
           images: |
-            registry.internal.huggingface.tech/api-inference/text-embeddings-inference
-            ghcr.io/huggingface/text-embeddings-inference
+            ghcr.io/jcudit/text-embeddings-inference
           flavor: |
             latest=false
           tags: |
@@ -122,16 +104,13 @@ jobs:
             ${{matrix.extraBuildArgs}}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=s3,region=us-east-1,bucket=ci-docker-buildx-cache,name=text-embeddings-inference-cache-${{matrix.name}},access_key_id=${{ secrets.S3_CI_DOCKER_BUILDX_CACHE_ACCESS_KEY_ID }},secret_access_key=${{ secrets.S3_CI_DOCKER_BUILDX_CACHE_SECRET_ACCESS_KEY }},mode=max
-          cache-to: type=s3,region=us-east-1,bucket=ci-docker-buildx-cache,name=text-embeddings-inference-cache-${{matrix.name}},access_key_id=${{ secrets.S3_CI_DOCKER_BUILDX_CACHE_ACCESS_KEY_ID }},secret_access_key=${{ secrets.S3_CI_DOCKER_BUILDX_CACHE_SECRET_ACCESS_KEY }},mode=max
 
       - name: Extract metadata (tags, labels) for Docker
         id: meta-grpc
         uses: docker/metadata-action@v5
         with:
           images: |
-            registry.internal.huggingface.tech/api-inference/text-embeddings-inference
-            ghcr.io/huggingface/text-embeddings-inference
+            ghcr.io/jcudit/text-embeddings-inference
           flavor: |
             latest=false
           tags: |
@@ -159,4 +138,3 @@ jobs:
             ${{matrix.extraBuildArgs}}
           tags: ${{ steps.meta-grpc.outputs.tags }}
           labels: ${{ steps.meta-grpc.outputs.labels }}
-          cache-from: type=s3,region=us-east-1,bucket=ci-docker-buildx-cache,name=text-embeddings-inference-cache-${{matrix.name}},access_key_id=${{ secrets.S3_CI_DOCKER_BUILDX_CACHE_ACCESS_KEY_ID }},secret_access_key=${{ secrets.S3_CI_DOCKER_BUILDX_CACHE_SECRET_ACCESS_KEY }},mode=max
